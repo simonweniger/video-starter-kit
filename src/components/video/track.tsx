@@ -205,7 +205,9 @@ export function VideoTrackView({
       ? previousTrack.getBoundingClientRect().right - timelineRect.left
       : 0;
     const rightBoundPixels = nextTrack
-      ? nextTrack.getBoundingClientRect().left - timelineRect.left - trackRect.width
+      ? nextTrack.getBoundingClientRect().left -
+        timelineRect.left -
+        trackRect.width
       : timelineRect.width - trackRect.width;
 
     return {
@@ -215,7 +217,7 @@ export function VideoTrackView({
       leftBoundPixels,
       rightBoundPixels,
       leftBoundPercent: (leftBoundPixels / parentWidth) * 100,
-      rightBoundPercent: (rightBoundPixels / parentWidth) * 100
+      rightBoundPercent: (rightBoundPixels / parentWidth) * 100,
     };
   };
 
@@ -224,7 +226,7 @@ export function VideoTrackView({
     if (!trackElement) return;
     const bounds = calculateBounds(trackElement);
     if (!bounds) return;
-    
+
     const startX = e.clientX;
     const startLeft = trackElement.offsetLeft;
 
@@ -264,7 +266,7 @@ export function VideoTrackView({
     e.stopPropagation();
     const trackElement = trackRef.current;
     if (!trackElement) return;
-    
+
     const bounds = calculateBounds(trackElement);
     if (!bounds) return;
 
@@ -285,20 +287,30 @@ export function VideoTrackView({
 
       if (direction === "left") {
         const endPoint = startLeft + startWidth;
-        
+
         // Calculate new left position in percentage
-        const proposedLeftPercent = ((startLeft + deltaX) / bounds.parentWidth) * 100;
-        
+        const proposedLeftPercent =
+          ((startLeft + deltaX) / bounds.parentWidth) * 100;
+
         // Ensure we don't go beyond the previous clip
-        const constrainedLeftPercent = Math.max(bounds.leftBoundPercent, proposedLeftPercent);
-        
+        const constrainedLeftPercent = Math.max(
+          bounds.leftBoundPercent,
+          proposedLeftPercent,
+        );
+
         // Calculate maximum left position based on minimum duration
-        const maxLeftPercent = ((endPoint - (minDuration / 1000 / 30) * bounds.parentWidth) / bounds.parentWidth) * 100;
-        
+        const maxLeftPercent =
+          ((endPoint - (minDuration / 1000 / 30) * bounds.parentWidth) /
+            bounds.parentWidth) *
+          100;
+
         // Apply all constraints
-        newLeft = Math.min(maxLeftPercent, constrainedLeftPercent) * bounds.parentWidth / 100;
+        newLeft =
+          (Math.min(maxLeftPercent, constrainedLeftPercent) *
+            bounds.parentWidth) /
+          100;
         newWidth = endPoint - newLeft;
-        
+
         // Update timestamp based on new position
         const newTimestamp = (newLeft / bounds.parentWidth) * 30 * 1000;
         frame.timestamp = Math.max(0, newTimestamp);
@@ -319,7 +331,7 @@ export function VideoTrackView({
           const endPoint = startLeft + startWidth;
           newLeft = endPoint - newWidth;
           frame.timestamp = (newLeft / bounds.parentWidth) * 30 * 1000;
-          
+
           // Recalculate startOffset based on how much we trimmed
           const trimAmount = startWidth - newWidth;
           const trimTime = (trimAmount / bounds.parentWidth) * 30 * 1000;
@@ -332,7 +344,7 @@ export function VideoTrackView({
           const endPoint = startLeft + startWidth;
           newLeft = endPoint - newWidth;
           frame.timestamp = (newLeft / bounds.parentWidth) * 30 * 1000;
-          
+
           // Recalculate startOffset based on how much we trimmed
           const trimAmount = startWidth - newWidth;
           const trimTime = (trimAmount / bounds.parentWidth) * 30 * 1000;
@@ -342,7 +354,7 @@ export function VideoTrackView({
 
       frame.duration = newDuration;
       trackElement.style.width = `${((frame.duration / 30) * 100) / 1000}%`;
-      
+
       if (direction === "left") {
         trackElement.style.left = `${(frame.timestamp / 30 / 10).toFixed(2)}%`;
       }
@@ -353,20 +365,20 @@ export function VideoTrackView({
       frame.duration = Math.round(frame.duration / 100) * 100;
       frame.timestamp = Math.round(frame.timestamp / 100) * 100;
       frame.startOffset = Math.round(frame.startOffset / 100) * 100;
-      
+
       // Update styles with rounded values
       trackElement.style.width = `${((frame.duration / 30) * 100) / 1000}%`;
       trackElement.style.left = `${(frame.timestamp / 30 / 10).toFixed(2)}%`;
-      
-      db.keyFrames.update(frame.id, { 
+
+      db.keyFrames.update(frame.id, {
         duration: frame.duration,
         timestamp: frame.timestamp,
-        startOffset: frame.startOffset
+        startOffset: frame.startOffset,
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.projectPreview(projectId),
       });
-      
+
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
