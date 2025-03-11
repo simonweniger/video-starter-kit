@@ -25,7 +25,7 @@ export const shareQueryKeys = {
 export function useShareVideo() {
   return useMutation({
     mutationFn: async (params: ShareVideoParams): Promise<string> => {
-      console.log('Sharing video:', params);
+      console.log("Sharing video:", params);
       try {
         // We would use a proper API client here, but for now we'll simulate the API call
         // In a real implementation, this would use the Convex client or a fetch call
@@ -43,11 +43,11 @@ export function useShareVideo() {
             projectId: params.projectId,
           }),
         });
-        
+
         if (!response.ok) {
           throw new Error(`Failed to share video: ${response.statusText}`);
         }
-        
+
         const data = await response.json();
         return data.id;
       } catch (error) {
@@ -67,24 +67,26 @@ export function useSharedVideo(id: string | undefined) {
     queryKey: id ? shareQueryKeys.sharedVideo(id) : ["sharedVideo", "none"],
     queryFn: async (): Promise<ShareVideoParams | null> => {
       if (!id) return null;
-      
-      console.log('Fetching shared video:', id);
+
+      console.log("Fetching shared video:", id);
       try {
         // We would use a proper API client here, but for now we'll simulate the API call
         // In a real implementation, this would use the Convex client or a fetch call
         const response = await fetch(`/api/share/${id}`);
-        
+
         if (!response.ok) {
           if (response.status === 404) {
             return null;
           }
-          throw new Error(`Failed to fetch shared video: ${response.statusText}`);
+          throw new Error(
+            `Failed to fetch shared video: ${response.statusText}`,
+          );
         }
-        
+
         const video = await response.json();
-        
+
         if (!video) return null;
-        
+
         // Return the video data in the expected format
         return {
           title: video.title,
@@ -108,24 +110,26 @@ export function useSharedVideo(id: string | undefined) {
  * Legacy function for backward compatibility
  * This uses the new TanStack Query hook internally
  */
-export async function fetchSharedVideo(id: string): Promise<ShareVideoParams | null> {
-  console.log('Fetching shared video (legacy method):', id);
+export async function fetchSharedVideo(
+  id: string,
+): Promise<ShareVideoParams | null> {
+  console.log("Fetching shared video (legacy method):", id);
   try {
     // We would use a proper API client here, but for now we'll simulate the API call
     // In a real implementation, this would use the Convex client or a fetch call
     const response = await fetch(`/api/share/${id}`);
-    
+
     if (!response.ok) {
       if (response.status === 404) {
         return null;
       }
       throw new Error(`Failed to fetch shared video: ${response.statusText}`);
     }
-    
+
     const video = await response.json();
-    
+
     if (!video) return null;
-    
+
     // Return the video data in the expected format
     return {
       title: video.title,
@@ -147,7 +151,7 @@ export async function fetchSharedVideo(id: string): Promise<ShareVideoParams | n
  * This uses the new TanStack Query hook internally
  */
 export async function shareVideo(params: ShareVideoParams): Promise<string> {
-  console.log('Sharing video (legacy method):', params);
+  console.log("Sharing video (legacy method):", params);
   try {
     // We would use a proper API client here, but for now we'll simulate the API call
     // In a real implementation, this would use the Convex client or a fetch call
@@ -165,11 +169,11 @@ export async function shareVideo(params: ShareVideoParams): Promise<string> {
         projectId: params.projectId,
       }),
     });
-    
+
     if (!response.ok) {
       throw new Error(`Failed to share video: ${response.statusText}`);
     }
-    
+
     const data = await response.json();
     return data.id;
   } catch (error) {

@@ -8,10 +8,10 @@ export default function AppPage() {
   useEffect(() => {
     // Get the lastProjectId from cookies on the client side
     const lastProjectId = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('__aivs_lastProjectId='))
-      ?.split('=')[1];
-    
+      .split("; ")
+      .find((row) => row.startsWith("__aivs_lastProjectId="))
+      ?.split("=")[1];
+
     if (lastProjectId) {
       setProjectId(lastProjectId);
     }

@@ -80,7 +80,7 @@ export function ExportDialog({ onOpenChange, ...props }: ExportDialogProps) {
         throw new Error("No video to share");
       }
       const videoInfo = exportVideo.data;
-      
+
       // Use the shareVideo function from lib/share.ts which uses Convex
       const id = await shareVideo({
         title: project.title,
@@ -90,14 +90,14 @@ export function ExportDialog({ onOpenChange, ...props }: ExportDialogProps) {
         projectId: projectId,
         createdAt: Date.now(),
       });
-      
+
       return { id };
     },
   });
 
   const handleOnShare = async () => {
     const { id } = await share.mutateAsync();
-    navigate({ to: '/share/$id', params: { id } });
+    navigate({ to: "/share/$id", params: { id } });
   };
 
   const actionsDisabled = exportVideo.isPending || share.isPending;
@@ -135,7 +135,7 @@ export function ExportDialog({ onOpenChange, ...props }: ExportDialogProps) {
             </div>
           ) : (
             // biome-ignore lint/a11y/useMediaCaption: <explanation>
-<video
+            <video
               src={exportVideo.data.video_url}
               controls
               className="w-full h-full"

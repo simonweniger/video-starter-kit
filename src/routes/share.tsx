@@ -45,13 +45,18 @@ export default function SharePage() {
   useEffect(() => {
     if (shareData) {
       document.title = shareData.title;
-      
+
       // Update meta description
-      const metaDescription = document.querySelector('meta[name="description"]');
+      const metaDescription = document.querySelector(
+        'meta[name="description"]',
+      );
       if (metaDescription) {
-        metaDescription.setAttribute('content', shareData.description || "Watch on Video AI Studio");
+        metaDescription.setAttribute(
+          "content",
+          shareData.description || "Watch on Video AI Studio",
+        );
       }
-      
+
       // You could add more meta tags here for Open Graph, Twitter, etc.
     }
   }, [shareData]);

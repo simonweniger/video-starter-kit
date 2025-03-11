@@ -31,7 +31,7 @@ export const createSharedVideo = mutation({
       projectId: args.projectId,
       createdAt: Date.now(),
     });
-    
+
     return videoId;
   },
 });
@@ -52,10 +52,10 @@ export const shareApi = httpAction(async ({ runMutation }, request) => {
   if (request.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });
   }
-  
+
   try {
     const payload = await request.json();
-    
+
     // Insert directly into the database using the same structure as the mutation
     // We can't directly call the mutation from an HTTP action in Convex
     // This is a simplified version that mimics the createSharedVideo mutation
@@ -68,11 +68,11 @@ export const shareApi = httpAction(async ({ runMutation }, request) => {
       projectId: payload.projectId,
       createdAt: Date.now(),
     };
-    
+
     // In a real implementation, we would use a proper database call
     // For now, we'll return a mock ID to simulate the behavior
     const mockId = `share_${Date.now()}`;
-    
+
     return Response.json({
       id: mockId,
       params: payload,

@@ -1,5 +1,5 @@
-import { Outlet } from '@tanstack/react-router';
-import { Toaster } from '@/components/ui/toaster';
+import { Outlet } from "@tanstack/react-router";
+import { Toaster } from "@/components/ui/toaster";
 
 export default function RootLayout() {
   return (

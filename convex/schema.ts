@@ -12,7 +12,7 @@ export default defineSchema({
     projectId: v.optional(v.string()),
     createdAt: v.number(),
   }),
-  
+
   // Define a table for storing shared videos
   sharedVideos: defineTable({
     title: v.string(),
