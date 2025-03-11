@@ -33,7 +33,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { useState } from "react";
-import { useUploadThing } from "@/lib/uploadthing";
+import { useConvexFileUpload } from "@/lib/convex-upload";
 import type { ClientUploadedFileData } from "uploadthing/types";
 import { db } from "@/data/db";
 import { useQueryClient } from "@tanstack/react-query";
@@ -59,14 +59,14 @@ export default function LeftPanel() {
   );
   const openGenerateDialog = useVideoProjectStore((s) => s.openGenerateDialog);
 
-  const { startUpload, isUploading } = useUploadThing("fileUploader");
+  const { startUpload, isUploading } = useConvexFileUpload();
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
     try {
-      const uploadedFiles = await startUpload(Array.from(files));
+      const uploadedFiles = await startUpload(Array.from(files), { projectId });
       if (uploadedFiles) {
         await handleUploadComplete(uploadedFiles);
       }
@@ -79,11 +79,7 @@ export default function LeftPanel() {
     }
   };
 
-  const handleUploadComplete = async (
-    files: ClientUploadedFileData<{
-      uploadedBy: string;
-    }>[],
-  ) => {
+  const handleUploadComplete = async (files: any[]) => {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const mediaType = file.type.split("/")[0];

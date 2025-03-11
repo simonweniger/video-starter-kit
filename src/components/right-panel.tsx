@@ -28,7 +28,7 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 
 import { useEffect, useMemo, useState } from "react";
-import { useUploadThing } from "@/lib/uploadthing";
+import { useConvexFileUpload } from "@/lib/convex-upload";
 import type { ClientUploadedFileData } from "uploadthing/types";
 import { db } from "@/data/db";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -304,7 +304,7 @@ export default function RightPanel({
     setTab("generation");
   };
 
-  const { startUpload, isUploading } = useUploadThing("fileUploader");
+  const { startUpload, isUploading } = useConvexFileUpload();
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -450,7 +450,18 @@ export default function RightPanel({
                 );
 
                 const initialInput = endpoint?.initialInput || {};
-                setGenerateData({ ...initialInput });
+
+                if (
+                  (mediaType === "video" &&
+                    endpoint?.endpointId === "fal-ai/hunyuan-video") ||
+                  mediaType !== "video"
+                ) {
+                  setGenerateData({ image: null, ...initialInput });
+                } else {
+                  setGenerateData({ ...initialInput });
+                }
+
+                setEndpointId(endpoint?.endpointId ?? AVAILABLE_ENDPOINTS[0].endpointId);
               }}
             />
           </div>
