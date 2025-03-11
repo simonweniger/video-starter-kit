@@ -24,9 +24,9 @@ import {
   FilmIcon,
 } from "lucide-react";
 import { Input } from "./ui/input";
-import type { ShareVideoParams } from "@/lib/share";
+import { shareVideo, type ShareVideoParams } from "@/lib/share";
 import { PROJECT_PLACEHOLDER } from "@/data/schema";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 
 type ExportDialogProps = {} & Parameters<typeof Dialog>[0];
 
@@ -39,7 +39,7 @@ export function ExportDialog({ onOpenChange, ...props }: ExportDialogProps) {
   const projectId = useProjectId();
   const { data: composition = EMPTY_VIDEO_COMPOSITION } =
     useVideoComposition(projectId);
-  const router = useRouter();
+  const navigate = useNavigate();
   const exportVideo = useMutation({
     mutationFn: async () => {
       const mediaItems = composition.mediaItems;
@@ -80,32 +80,24 @@ export function ExportDialog({ onOpenChange, ...props }: ExportDialogProps) {
         throw new Error("No video to share");
       }
       const videoInfo = exportVideo.data;
-      const response = await fetch("/api/share", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: project.title,
-          description: project.description ?? "",
-          videoUrl: videoInfo.video_url,
-          thumbnailUrl: videoInfo.thumbnail_url,
-          createdAt: Date.now(),
-          // TODO parametrize this
-          width: 1920,
-          height: 1080,
-        } satisfies ShareVideoParams),
+      
+      // Use the shareVideo function from lib/share.ts which uses Convex
+      const id = await shareVideo({
+        title: project.title,
+        description: project.description ?? "",
+        videoUrl: videoInfo.video_url,
+        thumbnailUrl: videoInfo.thumbnail_url,
+        projectId: projectId,
+        createdAt: Date.now(),
       });
-      if (!response.ok) {
-        throw new Error("Failed to share video");
-      }
-      return response.json();
+      
+      return { id };
     },
   });
 
   const handleOnShare = async () => {
     const { id } = await share.mutateAsync();
-    router.push(`/share/${id}`);
+    navigate({ to: '/share/$id', params: { id } });
   };
 
   const actionsDisabled = exportVideo.isPending || share.isPending;
@@ -142,7 +134,8 @@ export function ExportDialog({ onOpenChange, ...props }: ExportDialogProps) {
               )}
             </div>
           ) : (
-            <video
+            // biome-ignore lint/a11y/useMediaCaption: <explanation>
+<video
               src={exportVideo.data.video_url}
               controls
               className="w-full h-full"

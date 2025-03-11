@@ -78,7 +78,7 @@ body {
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-muted-foreground/70;
   }
   body {
     @apply bg-background text-foreground;
