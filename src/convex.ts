@@ -2,4 +2,6 @@
 import { ConvexReactClient } from "convex/react";
 
 // Create a Convex client with your deployment URL
-export const convex = new ConvexReactClient("https://eager-bat-724.convex.cloud");
+export const convex = new ConvexReactClient(
+  "https://eager-bat-724.convex.cloud",
+);

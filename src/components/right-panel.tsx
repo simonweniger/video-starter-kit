@@ -461,7 +461,9 @@ export default function RightPanel({
                   setGenerateData({ ...initialInput });
                 }
 
-                setEndpointId(endpoint?.endpointId ?? AVAILABLE_ENDPOINTS[0].endpointId);
+                setEndpointId(
+                  endpoint?.endpointId ?? AVAILABLE_ENDPOINTS[0].endpointId,
+                );
               }}
             />
           </div>

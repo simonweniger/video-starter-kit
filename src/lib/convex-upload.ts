@@ -28,22 +28,22 @@ export function useConvexFileUpload() {
 
   const startUpload = async (
     files: File[],
-    metadata: { projectId?: string; userId?: string } = {}
+    metadata: { projectId?: string; userId?: string } = {},
   ): Promise<FileData[]> => {
     if (!files.length) return [];
-    
+
     setIsUploading(true);
-    
+
     try {
       const uploadedFiles = await Promise.all(
         files.map(async (file) => {
           // Step 1: Get a signed upload URL from Convex
           const uploadUrl = await generateUploadUrl();
-          
-          if (!uploadUrl || typeof uploadUrl !== 'string') {
-            throw new Error('Failed to generate upload URL');
+
+          if (!uploadUrl || typeof uploadUrl !== "string") {
+            throw new Error("Failed to generate upload URL");
           }
-          
+
           // Step 2: Upload the file directly to storage
           const result = await fetch(uploadUrl, {
             method: "POST",
@@ -52,14 +52,14 @@ export function useConvexFileUpload() {
             },
             body: file,
           });
-          
+
           if (!result.ok) {
             throw new Error(`Failed to upload file: ${result.statusText}`);
           }
-          
+
           // Step 3: Get the storageId from the upload response
           const { storageId } = await result.json();
-          
+
           // Step 4: Store file metadata in the database
           const fileResult = await createFile({
             storageId,
@@ -69,10 +69,10 @@ export function useConvexFileUpload() {
             projectId: metadata?.projectId,
             userId: metadata?.userId,
           });
-          
+
           // Type assertion for the result
           const typedResult = fileResult as UploadResult;
-          
+
           return {
             id: typedResult.fileId,
             name: file.name,
@@ -80,12 +80,12 @@ export function useConvexFileUpload() {
             size: file.size,
             type: file.type,
             // Add fields to match UploadThing's structure
-            serverData: { uploadedBy: metadata?.userId || 'anonymous' },
+            serverData: { uploadedBy: metadata?.userId || "anonymous" },
             key: storageId,
           };
-        })
+        }),
       );
-      
+
       return uploadedFiles;
     } catch (error) {
       console.error("Error uploading files:", error);

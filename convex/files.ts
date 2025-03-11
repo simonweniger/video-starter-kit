@@ -23,11 +23,11 @@ export const createFile = mutation({
   handler: async (ctx, args) => {
     // Get the URL for the file - no need to check if file exists as the URL generation will fail if it doesn't
     const url = await ctx.storage.getUrl(args.storageId);
-    
+
     if (!url) {
       throw new ConvexError("Failed to get URL for uploaded file");
     }
-    
+
     // Store file metadata in the database
     const fileId = await ctx.db.insert("files", {
       name: args.name,
@@ -58,7 +58,7 @@ export const listFiles = query({
     if (!args.projectId) {
       return [];
     }
-    
+
     return await ctx.db
       .query("files")
       .filter((q) => q.eq(q.field("projectId"), args.projectId))
